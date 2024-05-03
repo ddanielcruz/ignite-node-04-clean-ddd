@@ -3,9 +3,9 @@ import {
   Timestamps,
 } from '@/core/entities/entity-with-timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { Optional } from '@/core/types/optional'
 
 import { Slug } from './value-objects/slug'
-import { Optional } from '@/core/types/optional'
 
 interface QuestionProps {
   authorId: UniqueEntityId
