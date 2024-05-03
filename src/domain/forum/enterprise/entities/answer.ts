@@ -1,7 +1,7 @@
 import { EntityWithTimestamps } from '@/core/entities/entity-with-timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
-interface AnswerProps {
+export interface AnswerProps {
   authorId: UniqueEntityId
   questionId: UniqueEntityId
   content: string
