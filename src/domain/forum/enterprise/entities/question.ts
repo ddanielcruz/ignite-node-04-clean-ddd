@@ -7,7 +7,7 @@ import { Optional } from '@/core/types/optional'
 
 import { Slug } from './value-objects/slug'
 
-interface QuestionProps {
+export interface QuestionProps {
   authorId: UniqueEntityId
   bestAnswerId: UniqueEntityId | null
   title: string
@@ -57,11 +57,13 @@ export class Question extends EntityWithTimestamps<QuestionProps> {
   }
 
   constructor(
-    props: Optional<QuestionProps, 'slug'> & Partial<Timestamps>,
+    props: Optional<QuestionProps, 'bestAnswerId' | 'slug'> &
+      Partial<Timestamps>,
     id?: UniqueEntityId | string,
   ) {
     super(
       {
+        bestAnswerId: null,
         slug: Slug.createFromText(props.title),
         ...props,
       },

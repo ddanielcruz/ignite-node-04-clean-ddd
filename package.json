@@ -9,6 +9,7 @@
   "private": true,
   "license": "UNLICENSED",
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@rocketseat/eslint-config": "^2.2.2",
     "@types/node": "^20.12.8",
     "eslint": "^8",
