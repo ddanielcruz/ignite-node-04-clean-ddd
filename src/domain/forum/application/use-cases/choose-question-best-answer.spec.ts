@@ -1,7 +1,7 @@
-import { makeAnswer } from 'test/factories/make-answer'
-import { makeQuestion } from 'test/factories/make-question'
-import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
-import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository'
+import { makeAnswer } from 'tests/factories/make-answer'
+import { makeQuestion } from 'tests/factories/make-question'
+import { InMemoryAnswersRepository } from 'tests/repositories/in-memory-answers-repository'
+import { InMemoryQuestionsRepository } from 'tests/repositories/in-memory-questions-repository'
 
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 

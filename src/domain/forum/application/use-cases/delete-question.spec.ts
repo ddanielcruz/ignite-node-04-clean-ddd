@@ -1,5 +1,5 @@
-import { makeQuestion } from 'test/factories/make-question'
-import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository'
+import { makeQuestion } from 'tests/factories/make-question'
+import { InMemoryQuestionsRepository } from 'tests/repositories/in-memory-questions-repository'
 
 import { DeleteQuestion } from './delete-question'
 import { NotAllowedError } from './errors/not-allowed-error'

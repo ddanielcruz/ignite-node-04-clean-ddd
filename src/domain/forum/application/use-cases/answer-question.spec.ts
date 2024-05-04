@@ -1,4 +1,4 @@
-import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
+import { InMemoryAnswersRepository } from 'tests/repositories/in-memory-answers-repository'
 
 import { AnswerQuestion } from './answer-question'
 

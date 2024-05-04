@@ -1,5 +1,5 @@
-import { makeAnswer } from 'test/factories/make-answer'
-import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
+import { makeAnswer } from 'tests/factories/make-answer'
+import { InMemoryAnswersRepository } from 'tests/repositories/in-memory-answers-repository'
 
 import { EditAnswer } from './edit-answer'
 import { NotAllowedError } from './errors/not-allowed-error'
