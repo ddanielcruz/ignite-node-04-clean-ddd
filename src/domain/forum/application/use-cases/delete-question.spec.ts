@@ -1,45 +1,39 @@
 import { makeQuestion } from 'test/factories/make-question'
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository'
 
-import { DeleteQuestionUseCase } from './delete-question'
+import { DeleteQuestion } from './delete-question'
+import { NotAllowedError } from './errors/not-allowed-error'
 
-describe('DeleteQuestion', () => {
-  let sut: DeleteQuestionUseCase
-  let inMemoryQuestionsRepo: InMemoryQuestionsRepository
+let sut: DeleteQuestion
+let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 
+describe('Delete Question', () => {
   beforeEach(() => {
-    inMemoryQuestionsRepo = new InMemoryQuestionsRepository()
-    sut = new DeleteQuestionUseCase(inMemoryQuestionsRepo)
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
+    sut = new DeleteQuestion(inMemoryQuestionsRepository)
   })
 
   it('should be able to delete a question', async () => {
-    const createdQuestion = makeQuestion()
-    await inMemoryQuestionsRepo.create(createdQuestion)
-
-    await sut.execute({
-      questionId: createdQuestion.id.value,
-      authorId: createdQuestion.authorId.value,
+    const questionToDelete = makeQuestion()
+    await inMemoryQuestionsRepository.create(questionToDelete)
+    const result = await sut.execute({
+      authorId: questionToDelete.authorId.value,
+      questionId: questionToDelete.id.value,
     })
 
-    expect(inMemoryQuestionsRepo.questions).toHaveLength(0)
+    expect(result.isRight()).toBe(true)
+    expect(inMemoryQuestionsRepository.questions).toHaveLength(0)
   })
 
-  it('should throw if question is not found', async () => {
-    const promise = sut.execute({
-      questionId: 'any_question_id',
-      authorId: 'any_author_id',
+  it('should not be able to delete a question from another user', async () => {
+    const questionToDelete = makeQuestion()
+    await inMemoryQuestionsRepository.create(questionToDelete)
+    const result = await sut.execute({
+      authorId: 'another_user',
+      questionId: questionToDelete.id.value,
     })
-    await expect(promise).rejects.toThrow()
-  })
 
-  it('should throw if author is not the same as the question author', async () => {
-    const createdQuestion = makeQuestion()
-    await inMemoryQuestionsRepo.create(createdQuestion)
-
-    const promise = sut.execute({
-      questionId: createdQuestion.id.value,
-      authorId: 'any_author_id',
-    })
-    await expect(promise).rejects.toThrow()
+    expect(result.value).toBeInstanceOf(NotAllowedError)
+    expect(inMemoryQuestionsRepository.questions).toHaveLength(1)
   })
 })

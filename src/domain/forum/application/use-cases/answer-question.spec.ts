@@ -1,28 +1,27 @@
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
 
-import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { AnswerQuestion } from './answer-question'
 
-import { AnswerQuestionUseCase } from './answer-question'
+let sut: AnswerQuestion
+let inMemoryAnswersRepository: InMemoryAnswersRepository
 
-let sut: AnswerQuestionUseCase
-let inMemoryAnswersRepo: InMemoryAnswersRepository
-
-describe('AnswerQuestion', () => {
+describe('Answer question', () => {
   beforeEach(() => {
-    inMemoryAnswersRepo = new InMemoryAnswersRepository()
-    sut = new AnswerQuestionUseCase(inMemoryAnswersRepo)
+    inMemoryAnswersRepository = new InMemoryAnswersRepository()
+    sut = new AnswerQuestion(inMemoryAnswersRepository)
   })
 
   it('should be able to create an answer', async () => {
-    const { answer } = await sut.execute({
+    const result = await sut.execute({
+      instructorId: 'any_instructor_id',
+      questionId: 'any_question_id',
       content: 'any_content',
-      instructorId: new UniqueEntityId('any_instructor_id'),
-      questionId: new UniqueEntityId('any_question_id'),
     })
 
+    assert(result.isRight())
+    const { answer } = result.value
+    expect(answer.id).toBeTruthy()
     expect(answer.content).toBe('any_content')
-    expect(answer.authorId.equals('any_instructor_id')).toBe(true)
-    expect(answer.questionId.equals('any_question_id')).toBe(true)
-    expect(inMemoryAnswersRepo.answers[0].id.equals(answer.id)).toBe(true)
+    expect(inMemoryAnswersRepository.answers.at(0)?.id).toEqual(answer.id)
   })
 })

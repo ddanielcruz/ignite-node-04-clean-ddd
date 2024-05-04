@@ -1,27 +1,29 @@
+import { Either, left, right } from '@/core/either'
+
 import { Question } from '../../enterprise/entities/question'
 import { QuestionsRepository } from '../repositories/questions-repository'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
-export interface GetQuestionBySlugUseCaseInput {
+interface GetQuestionBySlugRequest {
   slug: string
 }
 
-export interface GetQuestionBySlugUseCaseOutput {
-  question: Question
-}
+type GetQuestionBySlugResponse = Either<
+  ResourceNotFoundError,
+  { question: Question }
+>
 
-export class GetQuestionBySlugUseCase {
-  constructor(private readonly questionsRepo: QuestionsRepository) {}
+export class GetQuestionBySlug {
+  constructor(private readonly questionsRepository: QuestionsRepository) {}
 
-  async execute({
-    slug,
-  }: GetQuestionBySlugUseCaseInput): Promise<GetQuestionBySlugUseCaseOutput> {
-    const question = await this.questionsRepo.findBySlug(slug)
-
-    // TODO Use a custom error
+  async execute(
+    request: GetQuestionBySlugRequest,
+  ): Promise<GetQuestionBySlugResponse> {
+    const question = await this.questionsRepository.findBySlug(request.slug)
     if (!question) {
-      throw new Error('Question not found.')
+      return left(new ResourceNotFoundError())
     }
 
-    return { question }
+    return right({ question })
   }
 }

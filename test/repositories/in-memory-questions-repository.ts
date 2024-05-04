@@ -1,24 +1,43 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import {
+  DEFAULT_PAGE_SIZE,
+  PaginationParams,
+} from '@/core/repositories/pagination-params'
 import { QuestionsRepository } from '@/domain/forum/application/repositories/questions-repository'
 import { Question } from '@/domain/forum/enterprise/entities/question'
-import { Slug } from '@/domain/forum/enterprise/entities/value-objects/slug'
 
 export class InMemoryQuestionsRepository implements QuestionsRepository {
-  questions: Question[] = []
+  public questions: Question[] = []
 
   async create(question: Question): Promise<void> {
     this.questions.push(question)
   }
 
   async delete(question: Question): Promise<void> {
-    this.questions = this.questions.filter((q) => !q.id.equals(question.id))
+    this.questions = this.questions.filter(
+      (item) => item.id.value !== question.id.value,
+    )
   }
 
-  async findById(id: string | UniqueEntityId): Promise<Question | null> {
-    return this.questions.find((q) => q.id.toString() === id.toString()) ?? null
+  async findById(id: string): Promise<Question | null> {
+    return this.questions.find((question) => question.id.value === id) ?? null
   }
 
-  async findBySlug(slug: string | Slug): Promise<Question | null> {
-    return this.questions.find((q) => q.slug.value === slug.toString()) ?? null
+  async findBySlug(slug: string): Promise<Question | null> {
+    return (
+      this.questions.find((question) => question.slug.value === slug) ?? null
+    )
+  }
+
+  async findManyRecent({ page }: PaginationParams): Promise<Question[]> {
+    const offset = (page - 1) * DEFAULT_PAGE_SIZE
+    return this.questions
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(offset, offset + DEFAULT_PAGE_SIZE)
+  }
+
+  async save(question: Question): Promise<void> {
+    this.questions = this.questions.map((item) =>
+      item.id.value === question.id.value ? question : item,
+    )
   }
 }

@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 
+import { Timestamps } from '@/core/entities/entity-with-timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import {
   Question,
@@ -7,7 +8,9 @@ import {
 } from '@/domain/forum/enterprise/entities/question'
 
 export function makeQuestion(
-  override?: Partial<QuestionProps & { id: UniqueEntityId | string }>,
+  override?: Partial<
+    QuestionProps & Timestamps & { id: UniqueEntityId | string }
+  >,
 ): Question {
   return new Question(
     {

@@ -1,26 +1,29 @@
 import { Either, left, right } from '@/core/either'
 
+import { Answer } from '../../enterprise/entities/answer'
 import { AnswersRepository } from '../repositories/answers-repository'
 import { NotAllowedError } from './errors/not-allowed-error'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
-interface DeleteAnswerRequest {
+interface EditAnswerRequest {
   authorId: string
   answerId: string
+  content: string
 }
 
-type DeleteAnswerResponse = Either<
-  NotAllowedError | ResourceNotFoundError,
-  void
+type EditAnswerResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  { answer: Answer }
 >
 
-export class DeleteAnswer {
+export class EditAnswer {
   constructor(private readonly answersRepository: AnswersRepository) {}
 
   async execute({
     authorId,
     answerId,
-  }: DeleteAnswerRequest): Promise<DeleteAnswerResponse> {
+    content,
+  }: EditAnswerRequest): Promise<EditAnswerResponse> {
     const answer = await this.answersRepository.findById(answerId)
     if (!answer) {
       return left(new ResourceNotFoundError())
@@ -30,8 +33,9 @@ export class DeleteAnswer {
       return left(new NotAllowedError())
     }
 
-    await this.answersRepository.delete(answer)
+    answer.content = content
+    await this.answersRepository.save(answer)
 
-    return right(undefined)
+    return right({ answer })
   }
 }

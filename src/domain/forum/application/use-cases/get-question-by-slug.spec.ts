@@ -1,29 +1,23 @@
 import { makeQuestion } from 'test/factories/make-question'
 import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository'
 
-import { Slug } from '../../enterprise/entities/value-objects/slug'
-import { GetQuestionBySlugUseCase } from './get-question-by-slug'
+import { GetQuestionBySlug } from './get-question-by-slug'
 
-describe('GetQuestionBySlug', () => {
-  let sut: GetQuestionBySlugUseCase
-  let inMemoryQuestionsRepo: InMemoryQuestionsRepository
+let sut: GetQuestionBySlug
+let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 
+describe('Get Question By Slug', () => {
   beforeEach(() => {
-    inMemoryQuestionsRepo = new InMemoryQuestionsRepository()
-    sut = new GetQuestionBySlugUseCase(inMemoryQuestionsRepo)
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
+    sut = new GetQuestionBySlug(inMemoryQuestionsRepository)
   })
 
   it('should be able to get a question by slug', async () => {
-    const createdQuestion = makeQuestion({ slug: Slug.create('any_slug') })
-    await inMemoryQuestionsRepo.create(createdQuestion)
-
-    const { question } = await sut.execute({ slug: 'any_slug' })
-
-    expect(question.id.equals(createdQuestion.id)).toBe(true)
-  })
-
-  it('should throw if question is not found', async () => {
-    const promise = sut.execute({ slug: 'any_slug' })
-    await expect(promise).rejects.toThrow()
+    const newQuestion = makeQuestion()
+    await inMemoryQuestionsRepository.create(newQuestion)
+    const result = await sut.execute({ slug: newQuestion.slug.value })
+    assert(result.isRight())
+    expect(result.value.question.id).toBeTruthy()
+    expect(result.value.question.id).toEqual(newQuestion.id)
   })
 })

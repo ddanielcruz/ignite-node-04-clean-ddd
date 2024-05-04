@@ -1,45 +1,40 @@
 import { makeAnswer } from 'test/factories/make-answer'
 import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
 
-import { DeleteAnswerUseCase } from './delete-answer'
+import { DeleteAnswer } from './delete-answer'
+import { NotAllowedError } from './errors/not-allowed-error'
 
-describe('DeleteAnswer', () => {
-  let sut: DeleteAnswerUseCase
-  let inMemoryAnswersRepo: InMemoryAnswersRepository
+let sut: DeleteAnswer
+let inMemoryAnswersRepository: InMemoryAnswersRepository
 
+describe('Delete Answer', () => {
   beforeEach(() => {
-    inMemoryAnswersRepo = new InMemoryAnswersRepository()
-    sut = new DeleteAnswerUseCase(inMemoryAnswersRepo)
+    inMemoryAnswersRepository = new InMemoryAnswersRepository()
+    sut = new DeleteAnswer(inMemoryAnswersRepository)
   })
 
-  it('should be able to delete a answer', async () => {
-    const createdAnswer = makeAnswer()
-    await inMemoryAnswersRepo.create(createdAnswer)
-
-    await sut.execute({
-      answerId: createdAnswer.id.value,
-      authorId: createdAnswer.authorId.value,
+  it('should be able to delete an answer', async () => {
+    const answerToDelete = makeAnswer()
+    await inMemoryAnswersRepository.create(answerToDelete)
+    const result = await sut.execute({
+      authorId: answerToDelete.authorId.value,
+      answerId: answerToDelete.id.value,
     })
 
-    expect(inMemoryAnswersRepo.answers).toHaveLength(0)
+    expect(result.isRight()).toBeTruthy()
+    expect(inMemoryAnswersRepository.answers).toHaveLength(0)
   })
 
-  it('should throw if answer is not found', async () => {
-    const promise = sut.execute({
-      answerId: 'any_answer_id',
-      authorId: 'any_author_id',
+  it('should not be able to delete an answer from another user', async () => {
+    const answerToDelete = makeAnswer()
+    await inMemoryAnswersRepository.create(answerToDelete)
+    const result = await sut.execute({
+      authorId: 'another_user',
+      answerId: answerToDelete.id.value,
     })
-    await expect(promise).rejects.toThrow()
-  })
 
-  it('should throw if author is not the same as the answer author', async () => {
-    const createdAnswer = makeAnswer()
-    await inMemoryAnswersRepo.create(createdAnswer)
-
-    const promise = sut.execute({
-      answerId: createdAnswer.id.value,
-      authorId: 'any_author_id',
-    })
-    await expect(promise).rejects.toThrow()
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(NotAllowedError)
+    expect(inMemoryAnswersRepository.answers).toHaveLength(1)
   })
 })
