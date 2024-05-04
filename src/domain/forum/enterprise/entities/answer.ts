@@ -1,4 +1,4 @@
-import { EntityWithTimestamps } from '@/core/entities/entity-with-timestamps'
+import { EntityWithTimestamps } from '@/core/entities/entity'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 export interface AnswerProps {

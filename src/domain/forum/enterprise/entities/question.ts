@@ -1,7 +1,5 @@
-import {
-  EntityWithTimestamps,
-  Timestamps,
-} from '@/core/entities/entity-with-timestamps'
+import { AggregateRootWithTimestamps } from '@/core/entities/aggregate-root'
+import { Timestamps } from '@/core/entities/timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
 
@@ -17,7 +15,7 @@ export interface QuestionProps {
   attachments: QuestionAttachmentList
 }
 
-export class Question extends EntityWithTimestamps<QuestionProps> {
+export class Question extends AggregateRootWithTimestamps<QuestionProps> {
   get authorId() {
     return this.props.authorId
   }

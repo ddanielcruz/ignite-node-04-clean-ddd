@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 
-import { Timestamps } from '@/core/entities/entity-with-timestamps'
+import { Timestamps } from '@/core/entities/timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import {
   Question,
