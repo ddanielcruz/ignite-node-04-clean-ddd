@@ -1,8 +1,9 @@
 import { makeQuestion } from 'tests/factories/make-question'
 import { InMemoryQuestionsRepository } from 'tests/repositories/in-memory-questions-repository'
 
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
+
 import { DeleteQuestion } from './delete-question'
-import { NotAllowedError } from './errors/not-allowed-error'
 
 let sut: DeleteQuestion
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository

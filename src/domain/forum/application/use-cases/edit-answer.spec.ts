@@ -4,9 +4,9 @@ import { InMemoryAnswerAttachmentsRepository } from 'tests/repositories/in-memor
 import { InMemoryAnswersRepository } from 'tests/repositories/in-memory-answers-repository'
 
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
 
 import { EditAnswer } from './edit-answer'
-import { NotAllowedError } from './errors/not-allowed-error'
 
 let sut: EditAnswer
 let answersRepository: InMemoryAnswersRepository

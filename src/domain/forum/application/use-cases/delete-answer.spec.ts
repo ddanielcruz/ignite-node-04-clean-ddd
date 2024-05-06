@@ -1,8 +1,9 @@
 import { makeAnswer } from 'tests/factories/make-answer'
 import { InMemoryAnswersRepository } from 'tests/repositories/in-memory-answers-repository'
 
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
+
 import { DeleteAnswer } from './delete-answer'
-import { NotAllowedError } from './errors/not-allowed-error'
 
 let sut: DeleteAnswer
 let inMemoryAnswersRepository: InMemoryAnswersRepository
