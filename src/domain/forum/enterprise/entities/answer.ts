@@ -1,11 +1,19 @@
 import { EntityWithTimestamps } from '@/core/entities/entity'
+import { Timestamps } from '@/core/entities/timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { Optional } from '@/core/types/optional'
+
+import { AnswerAttachmentList } from './answer-attachment-list'
 
 export interface AnswerProps {
   authorId: UniqueEntityId
   questionId: UniqueEntityId
   content: string
+  attachments: AnswerAttachmentList
 }
+
+export type AnswerConstructorProps = Optional<AnswerProps, 'attachments'> &
+  Partial<Timestamps>
 
 export class Answer extends EntityWithTimestamps<AnswerProps> {
   get authorId() {
@@ -27,5 +35,24 @@ export class Answer extends EntityWithTimestamps<AnswerProps> {
 
   get excerpt() {
     return this.content.substring(0, 120).trimEnd().concat('...')
+  }
+
+  get attachments() {
+    return this.props.attachments
+  }
+
+  set attachments(value: AnswerAttachmentList) {
+    this.props.attachments = value
+    this.onUpdate()
+  }
+
+  constructor(props: AnswerConstructorProps, id?: UniqueEntityId | string) {
+    super(
+      {
+        attachments: new AnswerAttachmentList(),
+        ...props,
+      },
+      id,
+    )
   }
 }
