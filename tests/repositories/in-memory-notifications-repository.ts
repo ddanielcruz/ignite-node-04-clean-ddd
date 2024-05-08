@@ -4,20 +4,22 @@ import { Notification } from '@/domain/notification/enterprise/entities/notifica
 export class InMemoryNotificationsRepository
   implements NotificationsRepository
 {
-  public items: Notification[] = []
+  public notifications: Notification[] = []
 
   async findById(id: string) {
-    return this.items.find((item) => item.id.toString() === id) || null
+    return this.notifications.find((item) => item.id.toString() === id) || null
   }
 
   async create(notification: Notification) {
-    this.items.push(notification)
+    this.notifications.push(notification)
   }
 
   async save(notification: Notification) {
-    const idx = this.items.findIndex((item) => item.id === notification.id)
+    const idx = this.notifications.findIndex(
+      (item) => item.id === notification.id,
+    )
     if (idx >= 0) {
-      this.items[idx] = notification
+      this.notifications[idx] = notification
     }
   }
 }

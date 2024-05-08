@@ -10,6 +10,18 @@ export abstract class Entity<TProps> {
     this.props = props
     this.id = id instanceof UniqueEntityId ? id : new UniqueEntityId(id)
   }
+
+  public equals(entity: Entity<unknown>) {
+    if (entity === this) {
+      return true
+    }
+
+    if (entity.id.equals(this.id)) {
+      return true
+    }
+
+    return false
+  }
 }
 
 export abstract class EntityWithTimestamps<TProps> extends Entity<

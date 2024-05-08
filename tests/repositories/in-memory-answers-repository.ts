@@ -1,3 +1,4 @@
+import { DomainEvents } from '@/core/events/domain-events'
 import {
   DEFAULT_PAGE_SIZE,
   PaginationParams,
@@ -10,6 +11,7 @@ export class InMemoryAnswersRepository implements AnswersRepository {
 
   async create(answer: Answer): Promise<void> {
     this.answers.push(answer)
+    DomainEvents.dispatchEventsForAggregate(answer.id)
   }
 
   async delete(answer: Answer): Promise<void> {
@@ -36,5 +38,6 @@ export class InMemoryAnswersRepository implements AnswersRepository {
     this.answers = this.answers.map((item) =>
       item.id.value === answer.id.value ? answer : item,
     )
+    DomainEvents.dispatchEventsForAggregate(answer.id)
   }
 }

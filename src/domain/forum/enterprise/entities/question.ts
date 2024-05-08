@@ -3,6 +3,7 @@ import { Timestamps } from '@/core/entities/timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
 
+import { QuestionBestQuestionChosenEvent } from '../events/question-best-answer-chosen-event'
 import { QuestionAttachmentList } from './question-attachment-list'
 import { Slug } from './value-objects/slug'
 
@@ -25,6 +26,10 @@ export class Question extends AggregateRootWithTimestamps<QuestionProps> {
   }
 
   set bestAnswerId(value: UniqueEntityId | null) {
+    if (value && !value.equals(this.props.bestAnswerId)) {
+      this.addDomainEvent(new QuestionBestQuestionChosenEvent(this, value))
+    }
+
     this.props.bestAnswerId = value
     this.onUpdate()
   }
@@ -37,6 +42,15 @@ export class Question extends AggregateRootWithTimestamps<QuestionProps> {
     this.props.title = value
     this.props.slug = Slug.createFromText(value)
     this.onUpdate()
+  }
+
+  get abbreviatedTitle() {
+    let value = this.title.substring(0, 40).trimEnd()
+    if (this.title.length > value.length) {
+      value += '...'
+    }
+
+    return value
   }
 
   get content() {

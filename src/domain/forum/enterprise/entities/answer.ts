@@ -1,8 +1,9 @@
-import { EntityWithTimestamps } from '@/core/entities/entity'
+import { AggregateRootWithTimestamps } from '@/core/entities/aggregate-root'
 import { Timestamps } from '@/core/entities/timestamps'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
 
+import { AnswerCreatedEvent } from '../events/answer-created-event'
 import { AnswerAttachmentList } from './answer-attachment-list'
 
 export interface AnswerProps {
@@ -15,7 +16,7 @@ export interface AnswerProps {
 export type AnswerConstructorProps = Optional<AnswerProps, 'attachments'> &
   Partial<Timestamps>
 
-export class Answer extends EntityWithTimestamps<AnswerProps> {
+export class Answer extends AggregateRootWithTimestamps<AnswerProps> {
   get authorId() {
     return this.props.authorId
   }
@@ -47,12 +48,11 @@ export class Answer extends EntityWithTimestamps<AnswerProps> {
   }
 
   constructor(props: AnswerConstructorProps, id?: UniqueEntityId | string) {
-    super(
-      {
-        attachments: new AnswerAttachmentList(),
-        ...props,
-      },
-      id,
-    )
+    super({ attachments: new AnswerAttachmentList(), ...props }, id)
+
+    const isNewAnswer = !id
+    if (isNewAnswer) {
+      this.addDomainEvent(new AnswerCreatedEvent(this))
+    }
   }
 }
